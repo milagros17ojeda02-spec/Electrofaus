@@ -11,7 +11,7 @@
   <style>
     :root { color-scheme: light; --blue:#1769aa; --navy:#123b5d; --sky:#eaf5ff; --green:#18c928; --ink:#17212b; --muted:#657383; --line:#d7e1ea; }
     * { box-sizing:border-box; }
-    body { margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:#f2f6fa; color:var(--ink); }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:#f2f6fa; color:var(--ink); }
     .app { width:min(100%,560px); margin:0 auto; min-height:100dvh; background:#fff; padding:0 16px calc(24px + env(safe-area-inset-bottom)); }
     header { margin:0 -16px 18px; padding:22px 20px 20px; color:white; background:linear-gradient(135deg,var(--navy),var(--blue)); border-radius:0 0 22px 22px; }
     .brand { display:flex; align-items:center; gap:12px; }
@@ -60,7 +60,11 @@
     .settings-status { font-size:12px; color:var(--muted); margin:10px 0 0; min-height:18px; }
     .toggle-settings { background:#edf2f7; color:var(--navy); margin-top:10px; }
 
-    @media (min-width:560px) { body { padding:20px 0; } .app { border-radius:24px; box-shadow:0 12px 50px #123b5d15; overflow:hidden; } header { border-radius:0 0 22px 22px; } }
+    @media (min-width:560px) {
+      body { padding:20px 0; }
+      .app { border-radius:24px; box-shadow:0 12px 50px #123b5d15; overflow:hidden; }
+      header { border-radius:0 0 22px 22px; }
+    }
   </style>
 </head>
 <body>
@@ -68,61 +72,109 @@
     <header>
       <div class="brand">
         <div class="logo">EF</div>
-        <div><h1>Calculadora de cuotas</h1><p>Electrofaus · Lo mejor para tu hogar</p></div>
+        <div>
+          <h1>Calculadora de cuotas</h1>
+          <p>Electrofaus · Lo mejor para tu hogar</p>
+        </div>
       </div>
     </header>
 
     <div class="section-title">Datos de la venta</div>
+
     <label class="field">
       <span>Costo del producto</span>
-      <div class="money-wrap"><b>$</b><input id="cost" type="number" min="0" step="100" value="100000" inputmode="decimal" aria-label="Costo del producto"></div>
+      <div class="money-wrap">
+        <b>$</b>
+        <input id="cost" type="number" min="0" step="100" value="100000" inputmode="decimal" aria-label="Costo del producto">
+      </div>
     </label>
+
     <div class="two-col">
-      <label class="field"><span>Plazo</span>
-        <select id="plan"><option value="quincenal">Quincenal</option><option value="mensual">Mensual</option></select>
+      <label class="field">
+        <span>Plazo</span>
+        <select id="plan">
+          <option value="quincenal">Quincenal</option>
+          <option value="mensual">Mensual</option>
+        </select>
       </label>
-      <label class="field"><span>Opciones a mostrar</span>
-        <select id="options"><option value="2">2 opciones</option><option value="3">3 opciones</option><option value="4">4 opciones</option></select>
+
+      <label class="field">
+        <span>Opciones a mostrar</span>
+        <select id="options">
+          <option value="2">2 opciones</option>
+          <option value="3">3 opciones</option>
+          <option value="4">4 opciones</option>
+        </select>
       </label>
     </div>
+
     <p class="hint">Los porcentajes de interés y las cuotas están basados en la tabla de referencias de tu archivo.</p>
 
     <div class="section-title">Opciones de financiación</div>
     <div id="offers" class="offers" aria-live="polite"></div>
 
     <section class="summary">
-      <div class="summary-head"><h2>Texto para el cliente</h2></div>
+      <div class="summary-head">
+        <h2>Texto para el cliente</h2>
+      </div>
+
       <pre id="message"></pre>
+
       <button class="wa" id="whatsapp">Enviar por WhatsApp</button>
       <button class="secondary" id="copy">Copiar texto</button>
     </section>
 
-
     <div class="section-title">⚙️ Configuración</div>
+
     <section class="settings">
       <p class="settings-note">Podés cambiar los porcentajes de interés directamente desde la app. Los cambios quedan guardados en este dispositivo.</p>
+
       <div id="rateGrid" class="rate-grid"></div>
+
       <div class="settings-actions">
         <button class="secondary" id="resetRates">Restablecer tasas</button>
         <button class="secondary" id="clearRates">Borrar cambios</button>
       </div>
+
       <p id="settingsStatus" class="settings-status" aria-live="polite"></p>
     </section>
 
     <div class="section-title">Tabla de referencia</div>
+
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Cuotas</th><th>Interés</th><th>Valor de cuota</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Cuotas</th>
+            <th>Interés</th>
+            <th>Valor de cuota</th>
+          </tr>
+        </thead>
         <tbody id="reference"></tbody>
       </table>
     </div>
+
     <p class="footer">Electrofaus · Calculadora de uso interno</p>
   </main>
+
   <script>
     const defaultRates = {
-      quincenal: [{n:3,r:.75},{n:6,r:1.00},{n:7,r:1.30},{n:9,r:1.40},{n:12,r:1.50}],
-      mensual:   [{n:3,r:1.00},{n:6,r:1.35},{n:7,r:1.37},{n:9,r:1.40},{n:12,r:1.50}]
+      quincenal: [
+        {n:3,r:.75},
+        {n:6,r:1.00},
+        {n:7,r:1.30},
+        {n:9,r:1.40},
+        {n:12,r:1.50}
+      ],
+      mensual: [
+        {n:3,r:1.00},
+        {n:6,r:1.35},
+        {n:7,r:1.37},
+        {n:9,r:1.40},
+        {n:12,r:1.50}
+      ]
     };
+
     const RATE_KEY = 'electrofaus_rates_v1';
 
     function loadRates() {
@@ -130,6 +182,7 @@
         const saved = JSON.parse(localStorage.getItem(RATE_KEY));
         if (saved && saved.quincenal && saved.mensual) return saved;
       } catch (e) {}
+
       return JSON.parse(JSON.stringify(defaultRates));
     }
 
@@ -139,59 +192,110 @@
       localStorage.setItem(RATE_KEY, JSON.stringify(rates));
     }
 
+    const $ = id => document.getElementById(id);
+
+    const money = value =>
+      new Intl.NumberFormat('es-AR', {
+        maximumFractionDigits: 0
+      }).format(Math.round(value));
+
+    const pct = value => `${Math.round(value * 100)}%`;
+
     function renderSettings() {
       const grid = $('rateGrid');
+
       grid.innerHTML = Object.entries(rates).map(([plan, items]) => {
         const label = plan === 'quincenal' ? 'Quincenal' : 'Mensual';
+
         return items.map((item, index) => `
           <label class="rate-row">
             <span class="label">${label}<br>${item.n} cuotas</span>
             <span class="label">Interés</span>
-            <input class="rate-input" type="number" min="0" step="0.01"
-              value="${Math.round(item.r * 10000) / 100}" data-plan="${plan}" data-index="${index}"
-              aria-label="Interés ${label} ${item.n} cuotas">%
+            <input
+              class="rate-input"
+              type="number"
+              min="0"
+              step="0.01"
+              value="${Math.round(item.r * 10000) / 100}"
+              data-plan="${plan}"
+              data-index="${index}"
+              aria-label="Interés ${label} ${item.n} cuotas"
+            >%
           </label>
         `);
       }).join('');
+
       grid.querySelectorAll('.rate-input').forEach(input => {
         input.addEventListener('input', () => {
           const plan = input.dataset.plan;
           const index = Number(input.dataset.index);
+
           let percent = Number(input.value);
-          if (!Number.isFinite(percent) || percent < 0) percent = 0;
+
+          if (!Number.isFinite(percent) || percent < 0) {
+            percent = 0;
+          }
+
           rates[plan][index].r = percent / 100;
+
           saveRates();
+
           $('settingsStatus').textContent = '✓ Tasa guardada';
+
           render();
         });
       });
     }
-    const $ = id => document.getElementById(id);
-    const money = value => new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(Math.round(value));
-    const pct = value => `${Math.round(value*100)}%`;
+
     function render() {
       const cost = Math.max(0, Number($('cost').value) || 0);
       const plan = $('plan').value;
       const count = Number($('options').value);
       const data = rates[plan];
+
       const unit = plan === 'mensual' ? 'mensuales' : 'quincenales';
-      $('offers').innerHTML = data.slice(0,count).map(item => {
-        const total = cost * (1 + item.r), installment = total / item.n;
-        return `<article class="offer"><div><small>Valor por cuota</small><strong>$${money(installment)}</strong><div class="total">Total financiado: $${money(total)}</div></div><div><div class="term">${item.n} cuotas</div><div class="total">${pct(item.r)} de interés</div></div></article>`;
+
+      $('offers').innerHTML = data.slice(0, count).map(item => {
+        const total = cost * (1 + item.r);
+        const installment = total / item.n;
+
+        return `
+          <article class="offer">
+            <div>
+              <small>Valor por cuota</small>
+              <strong>$${money(installment)}</strong>
+              <div class="total">Total financiado: $${money(total)}</div>
+            </div>
+
+            <div>
+              <div class="term">${item.n} cuotas</div>
+              <div class="total">${pct(item.r)} de interés</div>
+            </div>
+          </article>
+        `;
       }).join('');
+
       $('message').textContent = [
         'ELECTROFAUS',
         '',
-        `Precio de contado: $${money(cost)}`,
-        '',
         'Opciones de financiación:',
-        ...data.slice(0,count).map(item => `• ${item.n} cuotas ${unit} de $${money(cost*(1+item.r)/item.n)}`)
+        ...data.slice(0, count).map(
+          item => `• ${item.n} cuotas ${unit} de $${money(cost * (1 + item.r) / item.n)}`
+        )
       ].join('\n');
-      $('reference').innerHTML = data.map(item => `<tr><td>${item.n}</td><td>${pct(item.r)}</td><td>$${money(cost*(1+item.r)/item.n)}</td></tr>`).join('');
+
+      $('reference').innerHTML = data.map(item => `
+        <tr>
+          <td>${item.n}</td>
+          <td>${pct(item.r)}</td>
+          <td>$${money(cost * (1 + item.r) / item.n)}</td>
+        </tr>
+      `).join('');
     }
-    $('cost').addEventListener('input',render);
-    $('plan').addEventListener('change',render);
-    $('options').addEventListener('change',render);
+
+    $('cost').addEventListener('input', render);
+    $('plan').addEventListener('change', render);
+    $('options').addEventListener('change', render);
 
     $('resetRates').addEventListener('click', () => {
       rates = JSON.parse(JSON.stringify(defaultRates));
@@ -208,23 +312,47 @@
       render();
       $('settingsStatus').textContent = '✓ Cambios locales borrados';
     });
-    $('whatsapp').addEventListener('click',() => {
-      const url = 'https://wa.me/?text=' + encodeURIComponent($('message').textContent);
-      window.open(url,'_blank','noopener,noreferrer');
+
+    $('whatsapp').addEventListener('click', () => {
+      const url =
+        'https://wa.me/?text=' +
+        encodeURIComponent($('message').textContent);
+
+      window.open(url, '_blank', 'noopener,noreferrer');
     });
-    $('copy').addEventListener('click',async () => {
+
+    $('copy').addEventListener('click', async () => {
       const btn = $('copy');
+
       try {
         await navigator.clipboard.writeText($('message').textContent);
+
         btn.textContent = '¡Texto copiado!';
-        setTimeout(() => btn.textContent = 'Copiar texto', 1600);
-      } catch(e) {
-        const range = document.createRange(); range.selectNodeContents($('message'));
-        const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
+
+        setTimeout(() => {
+          btn.textContent = 'Copiar texto';
+        }, 1600);
+
+      } catch (e) {
+        const range = document.createRange();
+        range.selectNodeContents($('message'));
+
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
         btn.textContent = 'Seleccioná y copiá el texto';
       }
     });
-    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('./sw.js')
+          .catch(() => {});
+      });
+    }
+
     renderSettings();
     render();
   </script>
