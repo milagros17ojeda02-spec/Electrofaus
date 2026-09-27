@@ -48,6 +48,18 @@
     th { background:#f1f6fa; color:var(--navy); font-weight:800; }
     th:first-child,td:first-child { text-align:left; }
     tr:last-child td { border-bottom:0; }
+
+    .settings { border:1px solid var(--line); border-radius:16px; padding:14px; background:#fff; margin-top:8px; }
+    .settings-note { color:var(--muted); font-size:12px; line-height:1.45; margin:0 0 12px; }
+    .rate-grid { display:grid; gap:10px; }
+    .rate-row { display:grid; grid-template-columns:1.15fr .75fr 1fr; gap:8px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); }
+    .rate-row:last-child { border-bottom:0; }
+    .rate-row .label { font-size:13px; font-weight:750; color:var(--navy); }
+    .rate-row .rate-input { min-height:44px; font-size:15px; padding:9px 10px; }
+    .settings-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+    .settings-status { font-size:12px; color:var(--muted); margin:10px 0 0; min-height:18px; }
+    .toggle-settings { background:#edf2f7; color:var(--navy); margin-top:10px; }
+
     @media (min-width:560px) { body { padding:20px 0; } .app { border-radius:24px; box-shadow:0 12px 50px #123b5d15; overflow:hidden; } header { border-radius:0 0 22px 22px; } }
   </style>
 </head>
@@ -85,6 +97,18 @@
       <button class="secondary" id="copy">Copiar texto</button>
     </section>
 
+
+    <div class="section-title">⚙️ Configuración</div>
+    <section class="settings">
+      <p class="settings-note">Podés cambiar los porcentajes de interés directamente desde la app. Los cambios quedan guardados en este dispositivo.</p>
+      <div id="rateGrid" class="rate-grid"></div>
+      <div class="settings-actions">
+        <button class="secondary" id="resetRates">Restablecer tasas</button>
+        <button class="secondary" id="clearRates">Borrar cambios</button>
+      </div>
+      <p id="settingsStatus" class="settings-status" aria-live="polite"></p>
+    </section>
+
     <div class="section-title">Tabla de referencia</div>
     <div class="table-wrap">
       <table>
@@ -95,10 +119,53 @@
     <p class="footer">Electrofaus · Calculadora de uso interno</p>
   </main>
   <script>
-    const rates = {
+    const defaultRates = {
       quincenal: [{n:3,r:.75},{n:6,r:1.00},{n:7,r:1.30},{n:9,r:1.40},{n:12,r:1.50}],
       mensual:   [{n:3,r:1.00},{n:6,r:1.35},{n:7,r:1.37},{n:9,r:1.40},{n:12,r:1.50}]
     };
+    const RATE_KEY = 'electrofaus_rates_v1';
+
+    function loadRates() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(RATE_KEY));
+        if (saved && saved.quincenal && saved.mensual) return saved;
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(defaultRates));
+    }
+
+    let rates = loadRates();
+
+    function saveRates() {
+      localStorage.setItem(RATE_KEY, JSON.stringify(rates));
+    }
+
+    function renderSettings() {
+      const grid = $('rateGrid');
+      grid.innerHTML = Object.entries(rates).map(([plan, items]) => {
+        const label = plan === 'quincenal' ? 'Quincenal' : 'Mensual';
+        return items.map((item, index) => `
+          <label class="rate-row">
+            <span class="label">${label}<br>${item.n} cuotas</span>
+            <span class="label">Interés</span>
+            <input class="rate-input" type="number" min="0" step="0.01"
+              value="${Math.round(item.r * 10000) / 100}" data-plan="${plan}" data-index="${index}"
+              aria-label="Interés ${label} ${item.n} cuotas">%
+          </label>
+        `);
+      }).join('');
+      grid.querySelectorAll('.rate-input').forEach(input => {
+        input.addEventListener('input', () => {
+          const plan = input.dataset.plan;
+          const index = Number(input.dataset.index);
+          let percent = Number(input.value);
+          if (!Number.isFinite(percent) || percent < 0) percent = 0;
+          rates[plan][index].r = percent / 100;
+          saveRates();
+          $('settingsStatus').textContent = '✓ Tasa guardada';
+          render();
+        });
+      });
+    }
     const $ = id => document.getElementById(id);
     const money = value => new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(Math.round(value));
     const pct = value => `${Math.round(value*100)}%`;
@@ -112,12 +179,35 @@
         const total = cost * (1 + item.r), installment = total / item.n;
         return `<article class="offer"><div><small>Valor por cuota</small><strong>$${money(installment)}</strong><div class="total">Total financiado: $${money(total)}</div></div><div><div class="term">${item.n} cuotas</div><div class="total">${pct(item.r)} de interés</div></div></article>`;
       }).join('');
-      $('message').textContent = 'PRECIO:\\n' + data.slice(0,count).map(item => `${item.n} cuotas ${unit} de $${money(cost*(1+item.r)/item.n)}`).join('\\n');
+      $('message').textContent = [
+        'ELECTROFAUS',
+        '',
+        `Precio de contado: $${money(cost)}`,
+        '',
+        'Opciones de financiación:',
+        ...data.slice(0,count).map(item => `• ${item.n} cuotas ${unit} de $${money(cost*(1+item.r)/item.n)}`)
+      ].join('\n');
       $('reference').innerHTML = data.map(item => `<tr><td>${item.n}</td><td>${pct(item.r)}</td><td>$${money(cost*(1+item.r)/item.n)}</td></tr>`).join('');
     }
     $('cost').addEventListener('input',render);
     $('plan').addEventListener('change',render);
     $('options').addEventListener('change',render);
+
+    $('resetRates').addEventListener('click', () => {
+      rates = JSON.parse(JSON.stringify(defaultRates));
+      saveRates();
+      renderSettings();
+      render();
+      $('settingsStatus').textContent = '✓ Tasas originales restauradas';
+    });
+
+    $('clearRates').addEventListener('click', () => {
+      localStorage.removeItem(RATE_KEY);
+      rates = JSON.parse(JSON.stringify(defaultRates));
+      renderSettings();
+      render();
+      $('settingsStatus').textContent = '✓ Cambios locales borrados';
+    });
     $('whatsapp').addEventListener('click',() => {
       const url = 'https://wa.me/?text=' + encodeURIComponent($('message').textContent);
       window.open(url,'_blank','noopener,noreferrer');
@@ -135,6 +225,7 @@
       }
     });
     if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+    renderSettings();
     render();
   </script>
 </body>
