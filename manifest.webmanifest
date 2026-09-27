@@ -1,0 +1,14 @@
+{
+  "name": "Calculadora Electrofaus",
+  "short_name": "Electrofaus",
+  "description": "Calculadora de financiación y cuotas de Electrofaus",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f6fa",
+  "theme_color": "#1769aa",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

@@ -1,0 +1,18 @@
+CALCULADORA ELECTROFAUS — APP PARA CELULAR
+
+Archivos:
+- index.html: aplicación.
+- manifest.webmanifest: configuración para instalarla.
+- sw.js: funcionamiento básico sin conexión después de la primera carga.
+- icon.svg: ícono.
+
+Cómo probar:
+1. Descomprimí la carpeta.
+2. Para verla en una computadora, abrí index.html en el navegador. Algunas funciones de instalación y modo sin conexión requieren que esté alojada en un sitio HTTPS.
+3. Para instalarla en el celular, primero publicá estos archivos en un hosting HTTPS (por ejemplo, GitHub Pages o un hosting propio).
+4. Abrí la dirección desde Chrome en Android y elegí “Instalar aplicación” o “Agregar a pantalla principal”.
+
+Notas:
+- La calculadora incluye las tasas visibles en la planilla para quincenal y mensual.
+- El archivo original también tiene “semanales” en el selector, pero no contiene una tabla de tasas semanales; por eso no se incluyó esa opción para evitar calcular con porcentajes incorrectos.
+- Las tasas y la cantidad de opciones se pueden ajustar si querés cambiar la lógica.
