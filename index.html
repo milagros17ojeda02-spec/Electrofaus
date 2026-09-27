@@ -9,61 +9,330 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>Calculadora | Electrofaus</title>
   <style>
-    :root { color-scheme: light; --blue:#1769aa; --navy:#123b5d; --sky:#eaf5ff; --green:#18c928; --ink:#17212b; --muted:#657383; --line:#d7e1ea; }
-    * { box-sizing:border-box; }
-    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:#f2f6fa; color:var(--ink); }
-    .app { width:min(100%,560px); margin:0 auto; min-height:100dvh; background:#fff; padding:0 16px calc(24px + env(safe-area-inset-bottom)); }
-    header { margin:0 -16px 18px; padding:22px 20px 20px; color:white; background:linear-gradient(135deg,var(--navy),var(--blue)); border-radius:0 0 22px 22px; }
-    .brand { display:flex; align-items:center; gap:12px; }
-    .logo { width:46px;height:46px;border-radius:14px;background:white;color:var(--blue);display:grid;place-items:center;font-weight:900;font-size:21px;letter-spacing:-1px; }
-    h1 { font-size:21px; margin:0; line-height:1.15; }
-    header p { margin:5px 0 0; opacity:.85; font-size:13px; }
-    .section-title { margin:20px 0 10px; font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--navy); }
-    .field { display:block; margin:12px 0; }
-    .field span { display:block; font-size:13px; font-weight:700; color:#435363; margin-bottom:7px; }
-    input,select { width:100%; min-height:49px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); padding:12px 14px; font:inherit; font-size:16px; outline:none; }
-    input:focus,select:focus { border-color:var(--blue); box-shadow:0 0 0 3px #1769aa20; }
-    .money-wrap { position:relative; }
-    .money-wrap b { position:absolute; left:14px; top:13px; font-size:17px; color:var(--muted); }
-    .money-wrap input { padding-left:34px; font-weight:750; font-size:19px; }
-    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .hint { color:var(--muted); font-size:12px; line-height:1.45; margin:8px 2px; }
-    .offers { display:grid; gap:10px; margin-top:12px; }
-    .offer { border:1px solid var(--line); border-radius:15px; padding:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; background:#fff; }
-    .offer small { display:block; color:var(--muted); font-size:12px; margin-bottom:3px; }
-    .offer strong { font-size:17px; }
-    .offer .term { font-weight:750; color:var(--navy); font-size:14px; text-align:right; }
-    .offer .total { font-size:12px; color:var(--muted); margin-top:3px; text-align:right; }
-    .summary { background:var(--sky); border:1px solid #cfe8ff; border-radius:16px; padding:14px; margin-top:18px; }
-    .summary-head { display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .summary h2 { font-size:15px; margin:0; color:var(--navy); }
-    .summary pre { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; font-size:14px; line-height:1.55; margin:12px 0 0; }
-    button { width:100%; min-height:50px; border:0; border-radius:13px; padding:13px 16px; font:inherit; font-weight:800; cursor:pointer; }
-    .wa { background:var(--green); color:#062b08; margin-top:12px; }
-    .secondary { background:#edf2f7; color:var(--navy); margin-top:8px; }
-    .footer { text-align:center; color:var(--muted); font-size:11px; padding:22px 0 0; }
-    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; }
-    table { border-collapse:collapse; width:100%; min-width:310px; font-size:12px; }
-    th,td { padding:9px 8px; text-align:right; border-bottom:1px solid var(--line); }
-    th { background:#f1f6fa; color:var(--navy); font-weight:800; }
-    th:first-child,td:first-child { text-align:left; }
-    tr:last-child td { border-bottom:0; }
-
-    .settings { border:1px solid var(--line); border-radius:16px; padding:14px; background:#fff; margin-top:8px; }
-    .settings-note { color:var(--muted); font-size:12px; line-height:1.45; margin:0 0 12px; }
-    .rate-grid { display:grid; gap:10px; }
-    .rate-row { display:grid; grid-template-columns:1.15fr .75fr 1fr; gap:8px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); }
-    .rate-row:last-child { border-bottom:0; }
-    .rate-row .label { font-size:13px; font-weight:750; color:var(--navy); }
-    .rate-row .rate-input { min-height:44px; font-size:15px; padding:9px 10px; }
-    .settings-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
-    .settings-status { font-size:12px; color:var(--muted); margin:10px 0 0; min-height:18px; }
-    .toggle-settings { background:#edf2f7; color:var(--navy); margin-top:10px; }
-
+    :root {
+      color-scheme: light;
+      --blue:#1769aa;
+      --navy:#123b5d;
+      --sky:#eaf5ff;
+      --green:#18c928;
+      --ink:#17212b;
+      --muted:#657383;
+      --line:#d7e1ea;
+    }
+    * {
+      box-sizing:border-box;
+    }
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:#f2f6fa;
+      color:var(--ink);
+    }
+    .app {
+      width:min(100%,560px);
+      margin:0 auto;
+      min-height:100dvh;
+      background:#fff;
+      padding:0 16px calc(24px + env(safe-area-inset-bottom));
+    }
+    header {
+      margin:0 -16px 18px;
+      padding:22px 20px 20px;
+      color:white;
+      background:linear-gradient(135deg,var(--navy),var(--blue));
+      border-radius:0 0 22px 22px;
+    }
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo {
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      background:white;
+      color:var(--blue);
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      font-size:21px;
+      letter-spacing:-1px;
+    }
+    h1 {
+      font-size:21px;
+      margin:0;
+      line-height:1.15;
+    }
+    header p {
+      margin:5px 0 0;
+      opacity:.85;
+      font-size:13px;
+    }
+    .section-title {
+      margin:20px 0 10px;
+      font-size:14px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:var(--navy);
+    }
+    .field {
+      display:block;
+      margin:12px 0;
+    }
+    .field span {
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      color:#435363;
+      margin-bottom:7px;
+    }
+    input,
+    select {
+      width:100%;
+      min-height:49px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      color:var(--ink);
+      padding:12px 14px;
+      font:inherit;
+      font-size:16px;
+      outline:none;
+    }
+    input:focus,
+    select:focus {
+      border-color:var(--blue);
+      box-shadow:0 0 0 3px #1769aa20;
+    }
+    .money-wrap {
+      position:relative;
+    }
+    .money-wrap b {
+      position:absolute;
+      left:14px;
+      top:13px;
+      font-size:17px;
+      color:var(--muted);
+    }
+    .money-wrap input {
+      padding-left:34px;
+      font-weight:750;
+      font-size:19px;
+    }
+    .two-col {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .hint {
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      margin:8px 2px;
+    }
+    .offers {
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .offer {
+      border:1px solid var(--line);
+      border-radius:15px;
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:#fff;
+    }
+    .offer small {
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:3px;
+    }
+    .offer strong {
+      font-size:17px;
+    }
+    .offer .term {
+      font-weight:750;
+      color:var(--navy);
+      font-size:14px;
+      text-align:right;
+    }
+    .offer .total {
+      font-size:12px;
+      color:var(--muted);
+      margin-top:3px;
+      text-align:right;
+    }
+    .summary {
+      background:var(--sky);
+      border:1px solid #cfe8ff;
+      border-radius:16px;
+      padding:14px;
+      margin-top:18px;
+    }
+    .summary-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .summary h2 {
+      font-size:15px;
+      margin:0;
+      color:var(--navy);
+    }
+    .summary pre {
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      font:inherit;
+      font-size:14px;
+      line-height:1.55;
+      margin:12px 0 0;
+    }
+    button {
+      width:100%;
+      min-height:50px;
+      border:0;
+      border-radius:13px;
+      padding:13px 16px;
+      font:inherit;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .wa {
+      background:var(--green);
+      color:#062b08;
+      margin-top:12px;
+    }
+    .secondary {
+      background:#edf2f7;
+      color:var(--navy);
+      margin-top:8px;
+    }
+    .footer {
+      text-align:center;
+      color:var(--muted);
+      font-size:11px;
+      padding:22px 0 0;
+    }
+    .table-wrap {
+      overflow-x:auto;
+      border:1px solid var(--line);
+      border-radius:12px;
+    }
+    table {
+      border-collapse:collapse;
+      width:100%;
+      min-width:310px;
+      font-size:12px;
+    }
+    th,
+    td {
+      padding:9px 8px;
+      text-align:right;
+      border-bottom:1px solid var(--line);
+    }
+    th {
+      background:#f1f6fa;
+      color:var(--navy);
+      font-weight:800;
+    }
+    th:first-child,
+    td:first-child {
+      text-align:left;
+    }
+    tr:last-child td {
+      border-bottom:0;
+    }
+    /* CONFIGURACIÓN DESPLEGABLE */
+    .settings-toggle {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      width:100%;
+      background:#edf2f7;
+      color:var(--navy);
+      margin-top:20px;
+      text-align:left;
+    }
+    .settings-toggle .arrow {
+      font-size:18px;
+      transition:transform .2s ease;
+    }
+    .settings-toggle.open .arrow {
+      transform:rotate(180deg);
+    }
+    .settings {
+      display:none;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#fff;
+      margin-top:10px;
+    }
+    .settings.open {
+      display:block;
+    }
+    .settings-note {
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      margin:0 0 12px;
+    }
+    .rate-grid {
+      display:grid;
+      gap:10px;
+    }
+    .rate-row {
+      display:grid;
+      grid-template-columns:1.15fr .75fr 1fr;
+      gap:8px;
+      align-items:center;
+      padding:9px 0;
+      border-bottom:1px solid var(--line);
+    }
+    .rate-row:last-child {
+      border-bottom:0;
+    }
+    .rate-row .label {
+      font-size:13px;
+      font-weight:750;
+      color:var(--navy);
+    }
+    .rate-row .rate-input {
+      min-height:44px;
+      font-size:15px;
+      padding:9px 10px;
+    }
+    .settings-actions {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:12px;
+    }
+    .settings-status {
+      font-size:12px;
+      color:var(--muted);
+      margin:10px 0 0;
+      min-height:18px;
+    }
     @media (min-width:560px) {
-      body { padding:20px 0; }
-      .app { border-radius:24px; box-shadow:0 12px 50px #123b5d15; overflow:hidden; }
-      header { border-radius:0 0 22px 22px; }
+      body {
+        padding:20px 0;
+      }
+      .app {
+        border-radius:24px;
+        box-shadow:0 12px 50px #123b5d15;
+        overflow:hidden;
+      }
+      header {
+        border-radius:0 0 22px 22px;
+      }
     }
   </style>
 </head>
@@ -78,17 +347,22 @@
         </div>
       </div>
     </header>
-
     <div class="section-title">Datos de la venta</div>
-
     <label class="field">
       <span>Costo del producto</span>
       <div class="money-wrap">
         <b>$</b>
-        <input id="cost" type="number" min="0" step="100" value="100000" inputmode="decimal" aria-label="Costo del producto">
+        <input
+          id="cost"
+          type="number"
+          min="0"
+          step="100"
+          value="100000"
+          inputmode="decimal"
+          aria-label="Costo del producto"
+        >
       </div>
     </label>
-
     <div class="two-col">
       <label class="field">
         <span>Plazo</span>
@@ -97,7 +371,6 @@
           <option value="mensual">Mensual</option>
         </select>
       </label>
-
       <label class="field">
         <span>Opciones a mostrar</span>
         <select id="options">
@@ -107,40 +380,54 @@
         </select>
       </label>
     </div>
-
-    <p class="hint">Los porcentajes de interés y las cuotas están basados en la tabla de referencias de tu archivo.</p>
-
-    <div class="section-title">Opciones de financiación</div>
+    <p class="hint">
+      Los porcentajes de interés y las cuotas están basados en la tabla de referencias de tu archivo.
+    </p>
+    <div class="section-title">
+      Opciones de financiación
+    </div>
     <div id="offers" class="offers" aria-live="polite"></div>
-
     <section class="summary">
       <div class="summary-head">
         <h2>Texto para el cliente</h2>
       </div>
-
       <pre id="message"></pre>
-
-      <button class="wa" id="whatsapp">Enviar por WhatsApp</button>
-      <button class="secondary" id="copy">Copiar texto</button>
+      <button class="wa" id="whatsapp">
+        Enviar por WhatsApp
+      </button>
+      <button class="secondary" id="copy">
+        Copiar texto
+      </button>
     </section>
-
-    <div class="section-title">⚙️ Configuración</div>
-
-    <section class="settings">
-      <p class="settings-note">Podés cambiar los porcentajes de interés directamente desde la app. Los cambios quedan guardados en este dispositivo.</p>
-
+    <!-- BOTÓN DE CONFIGURACIÓN -->
+    <button class="settings-toggle" id="settingsToggle">
+      <span>⚙️ Configuración</span>
+      <span class="arrow">▼</span>
+    </button>
+    <!-- CONFIGURACIÓN OCULTA -->
+    <section class="settings" id="settings">
+      <p class="settings-note">
+        Podés cambiar los porcentajes de interés directamente desde la app.
+        Los cambios quedan guardados en este dispositivo.
+      </p>
       <div id="rateGrid" class="rate-grid"></div>
-
       <div class="settings-actions">
-        <button class="secondary" id="resetRates">Restablecer tasas</button>
-        <button class="secondary" id="clearRates">Borrar cambios</button>
+        <button class="secondary" id="resetRates">
+          Restablecer tasas
+        </button>
+        <button class="secondary" id="clearRates">
+          Borrar cambios
+        </button>
       </div>
-
-      <p id="settingsStatus" class="settings-status" aria-live="polite"></p>
+      <p
+        id="settingsStatus"
+        class="settings-status"
+        aria-live="polite"
+      ></p>
     </section>
-
-    <div class="section-title">Tabla de referencia</div>
-
+    <div class="section-title">
+      Tabla de referencia
+    </div>
     <div class="table-wrap">
       <table>
         <thead>
@@ -153,10 +440,10 @@
         <tbody id="reference"></tbody>
       </table>
     </div>
-
-    <p class="footer">Electrofaus · Calculadora de uso interno</p>
+    <p class="footer">
+      Electrofaus · Calculadora de uso interno
+    </p>
   </main>
-
   <script>
     const defaultRates = {
       quincenal: [
@@ -174,185 +461,310 @@
         {n:12,r:1.50}
       ]
     };
-
     const RATE_KEY = 'electrofaus_rates_v1';
-
+    const $ = id => document.getElementById(id);
     function loadRates() {
       try {
-        const saved = JSON.parse(localStorage.getItem(RATE_KEY));
-        if (saved && saved.quincenal && saved.mensual) return saved;
+        const saved =
+          JSON.parse(localStorage.getItem(RATE_KEY));
+        if (
+          saved &&
+          saved.quincenal &&
+          saved.mensual
+        ) {
+          return saved;
+        }
       } catch (e) {}
-
-      return JSON.parse(JSON.stringify(defaultRates));
+      return JSON.parse(
+        JSON.stringify(defaultRates)
+      );
     }
-
     let rates = loadRates();
-
     function saveRates() {
-      localStorage.setItem(RATE_KEY, JSON.stringify(rates));
+      localStorage.setItem(
+        RATE_KEY,
+        JSON.stringify(rates)
+      );
     }
-
-    const $ = id => document.getElementById(id);
-
     const money = value =>
       new Intl.NumberFormat('es-AR', {
-        maximumFractionDigits: 0
-      }).format(Math.round(value));
-
-    const pct = value => `${Math.round(value * 100)}%`;
-
+        maximumFractionDigits:0
+      }).format(
+        Math.round(value)
+      );
+    const pct = value =>
+      `${Math.round(value * 100)}%`;
     function renderSettings() {
       const grid = $('rateGrid');
-
-      grid.innerHTML = Object.entries(rates).map(([plan, items]) => {
-        const label = plan === 'quincenal' ? 'Quincenal' : 'Mensual';
-
-        return items.map((item, index) => `
-          <label class="rate-row">
-            <span class="label">${label}<br>${item.n} cuotas</span>
-            <span class="label">Interés</span>
-            <input
-              class="rate-input"
-              type="number"
-              min="0"
-              step="0.01"
-              value="${Math.round(item.r * 10000) / 100}"
-              data-plan="${plan}"
-              data-index="${index}"
-              aria-label="Interés ${label} ${item.n} cuotas"
-            >%
-          </label>
-        `);
-      }).join('');
-
-      grid.querySelectorAll('.rate-input').forEach(input => {
-        input.addEventListener('input', () => {
-          const plan = input.dataset.plan;
-          const index = Number(input.dataset.index);
-
-          let percent = Number(input.value);
-
-          if (!Number.isFinite(percent) || percent < 0) {
-            percent = 0;
-          }
-
-          rates[plan][index].r = percent / 100;
-
-          saveRates();
-
-          $('settingsStatus').textContent = '✓ Tasa guardada';
-
-          render();
+      grid.innerHTML =
+        Object.entries(rates)
+          .map(([plan, items]) => {
+            const label =
+              plan === 'quincenal'
+                ? 'Quincenal'
+                : 'Mensual';
+            return items.map(
+              (item, index) => `
+                <label class="rate-row">
+                  <span class="label">
+                    ${label}<br>
+                    ${item.n} cuotas
+                  </span>
+                  <span class="label">
+                    Interés
+                  </span>
+                  <input
+                    class="rate-input"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value="${Math.round(item.r * 10000) / 100}"
+                    data-plan="${plan}"
+                    data-index="${index}"
+                    aria-label="Interés ${label} ${item.n} cuotas"
+                  >%
+                </label>
+              `
+            ).join('');
+          })
+          .join('');
+      grid
+        .querySelectorAll('.rate-input')
+        .forEach(input => {
+          input.addEventListener(
+            'input',
+            () => {
+              const plan =
+                input.dataset.plan;
+              const index =
+                Number(input.dataset.index);
+              let percent =
+                Number(input.value);
+              if (
+                !Number.isFinite(percent) ||
+                percent < 0
+              ) {
+                percent = 0;
+              }
+              rates[plan][index].r =
+                percent / 100;
+              saveRates();
+              $('settingsStatus').textContent =
+                '✓ Tasa guardada';
+              render();
+            }
+          );
         });
-      });
     }
-
     function render() {
-      const cost = Math.max(0, Number($('cost').value) || 0);
-      const plan = $('plan').value;
-      const count = Number($('options').value);
-      const data = rates[plan];
-
-      const unit = plan === 'mensual' ? 'mensuales' : 'quincenales';
-
-      $('offers').innerHTML = data.slice(0, count).map(item => {
-        const total = cost * (1 + item.r);
-        const installment = total / item.n;
-
-        return `
-          <article class="offer">
-            <div>
-              <small>Valor por cuota</small>
-              <strong>$${money(installment)}</strong>
-              <div class="total">Total financiado: $${money(total)}</div>
-            </div>
-
-            <div>
-              <div class="term">${item.n} cuotas</div>
-              <div class="total">${pct(item.r)} de interés</div>
-            </div>
-          </article>
-        `;
-      }).join('');
-
+      const cost =
+        Math.max(
+          0,
+          Number($('cost').value) || 0
+        );
+      const plan =
+        $('plan').value;
+      const count =
+        Number($('options').value);
+      const data =
+        rates[plan];
+      const unit =
+        plan === 'mensual'
+          ? 'mensuales'
+          : 'quincenales';
+      $('offers').innerHTML =
+        data
+          .slice(0, count)
+          .map(item => {
+            const total =
+              cost * (1 + item.r);
+            const installment =
+              total / item.n;
+            return `
+              <article class="offer">
+                <div>
+                  <small>
+                    Valor por cuota
+                  </small>
+                  <strong>
+                    $${money(installment)}
+                  </strong>
+                  <div class="total">
+                    Total financiado:
+                    $${money(total)}
+                  </div>
+                </div>
+                <div>
+                  <div class="term">
+                    ${item.n} cuotas
+                  </div>
+                  <div class="total">
+                    ${pct(item.r)} de interés
+                  </div>
+                </div>
+              </article>
+            `;
+          })
+          .join('');
+      /*
+        TEXTO PARA EL CLIENTE
+        IMPORTANTE:
+        NO incluye precio de contado.
+      */
       $('message').textContent = [
         'ELECTROFAUS',
         '',
         'Opciones de financiación:',
-        ...data.slice(0, count).map(
-          item => `• ${item.n} cuotas ${unit} de $${money(cost * (1 + item.r) / item.n)}`
-        )
+        ...data
+          .slice(0, count)
+          .map(
+            item =>
+              `• ${item.n} cuotas ${unit} de $${money(
+                cost * (1 + item.r) / item.n
+              )}`
+          )
       ].join('\n');
-
-      $('reference').innerHTML = data.map(item => `
-        <tr>
-          <td>${item.n}</td>
-          <td>${pct(item.r)}</td>
-          <td>$${money(cost * (1 + item.r) / item.n)}</td>
-        </tr>
-      `).join('');
+      $('reference').innerHTML =
+        data
+          .map(item => `
+            <tr>
+              <td>
+                ${item.n}
+              </td>
+              <td>
+                ${pct(item.r)}
+              </td>
+              <td>
+                $${money(
+                  cost * (1 + item.r) / item.n
+                )}
+              </td>
+            </tr>
+          `)
+          .join('');
     }
-
-    $('cost').addEventListener('input', render);
-    $('plan').addEventListener('change', render);
-    $('options').addEventListener('change', render);
-
-    $('resetRates').addEventListener('click', () => {
-      rates = JSON.parse(JSON.stringify(defaultRates));
-      saveRates();
-      renderSettings();
-      render();
-      $('settingsStatus').textContent = '✓ Tasas originales restauradas';
-    });
-
-    $('clearRates').addEventListener('click', () => {
-      localStorage.removeItem(RATE_KEY);
-      rates = JSON.parse(JSON.stringify(defaultRates));
-      renderSettings();
-      render();
-      $('settingsStatus').textContent = '✓ Cambios locales borrados';
-    });
-
-    $('whatsapp').addEventListener('click', () => {
-      const url =
-        'https://wa.me/?text=' +
-        encodeURIComponent($('message').textContent);
-
-      window.open(url, '_blank', 'noopener,noreferrer');
-    });
-
-    $('copy').addEventListener('click', async () => {
-      const btn = $('copy');
-
-      try {
-        await navigator.clipboard.writeText($('message').textContent);
-
-        btn.textContent = '¡Texto copiado!';
-
-        setTimeout(() => {
-          btn.textContent = 'Copiar texto';
-        }, 1600);
-
-      } catch (e) {
-        const range = document.createRange();
-        range.selectNodeContents($('message'));
-
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-        btn.textContent = 'Seleccioná y copiá el texto';
-      }
-    });
-
+    /*
+      ABRIR / CERRAR CONFIGURACIÓN
+    */
+    $('settingsToggle')
+      .addEventListener(
+        'click',
+        () => {
+          const settings =
+            $('settings');
+          const button =
+            $('settingsToggle');
+          settings.classList.toggle('open');
+          button.classList.toggle('open');
+        }
+      );
+    $('cost')
+      .addEventListener(
+        'input',
+        render
+      );
+    $('plan')
+      .addEventListener(
+        'change',
+        render
+      );
+    $('options')
+      .addEventListener(
+        'change',
+        render
+      );
+    $('resetRates')
+      .addEventListener(
+        'click',
+        () => {
+          rates =
+            JSON.parse(
+              JSON.stringify(defaultRates)
+            );
+          saveRates();
+          renderSettings();
+          render();
+          $('settingsStatus').textContent =
+            '✓ Tasas originales restauradas';
+        }
+      );
+    $('clearRates')
+      .addEventListener(
+        'click',
+        () => {
+          localStorage.removeItem(
+            RATE_KEY
+          );
+          rates =
+            JSON.parse(
+              JSON.stringify(defaultRates)
+            );
+          renderSettings();
+          render();
+          $('settingsStatus').textContent =
+            '✓ Cambios locales borrados';
+        }
+      );
+    $('whatsapp')
+      .addEventListener(
+        'click',
+        () => {
+          const url =
+            'https://wa.me/?text=' +
+            encodeURIComponent(
+              $('message').textContent
+            );
+          window.open(
+            url,
+            '_blank',
+            'noopener,noreferrer'
+          );
+        }
+      );
+    $('copy')
+      .addEventListener(
+        'click',
+        async () => {
+          const btn =
+            $('copy');
+          try {
+            await navigator.clipboard.writeText(
+              $('message').textContent
+            );
+            btn.textContent =
+              '¡Texto copiado!';
+            setTimeout(
+              () => {
+                btn.textContent =
+                  'Copiar texto';
+              },
+              1600
+            );
+          } catch (e) {
+            const range =
+              document.createRange();
+            range.selectNodeContents(
+              $('message')
+            );
+            const selection =
+              window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            btn.textContent =
+              'Seleccioná y copiá el texto';
+          }
+        }
+      );
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker
-          .register('./sw.js')
-          .catch(() => {});
-      });
+      window.addEventListener(
+        'load',
+        () => {
+          navigator.serviceWorker
+            .register('./sw.js')
+            .catch(() => {});
+        }
+      );
     }
-
     renderSettings();
     render();
   </script>
